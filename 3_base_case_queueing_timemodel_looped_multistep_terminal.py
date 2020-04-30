@@ -236,6 +236,11 @@ n_sims = 100
 sims_total_wait_time_system = np.empty(shape = n_sims)
 sims_total_service_time_system = np.empty(shape = n_sims)
 sims_total_time_system = np.empty(shape = n_sims)
+
+sims_thruput_checkin = np.empty(shape = n_sims)
+sims_thruput_refine_complaint = np.empty(shape = n_sims)
+sims_thruput_exam = np.empty(shape = n_sims)
+sims_thruput_checkout = np.empty(shape = n_sims)
 sims_thruput_checkin_checkout = np.empty(shape = n_sims)
 
 for sim in range(n_sims) :
@@ -367,13 +372,26 @@ for sim in range(n_sims) :
     sims_total_service_time_system[sim] = total_service_time_final
     sims_total_wait_time_system[sim] =total_waiting_time_final
     sims_total_time_system[sim] = total_time_in_system_final
+
+    sims_thruput_checkin[sim] = served_check_in_final / arrived_check_in_final
+    sims_thruput_refine_complaint[sim] = served_refine_complaint_final / arrived_refine_complaint_final
+    sims_thruput_exam[sim] = served_exam_final / arrived_exam_final
+    sims_thruput_checkout[sim] = served_checkout_final / arrived_checkout_final
     sims_thruput_checkin_checkout[sim] = served_checkout_final / arrived_check_in_final
 
 print ('Total time in system: {:.2f}'.format(np.mean(sims_total_time_system)))
-print ('    [0.2, 0.8]:', np.percentile(sims_total_time_system, [0.2, 0.8]))
+print ('    [0.2, 0.8]:', np.percentile(sims_total_time_system, [20, 80]))
 print ('Total service time in system: {:.2f}'.format(np.mean(sims_total_service_time_system)))
-print ('    [0.2, 0.8]:', np.percentile(sims_total_service_time_system, [0.2, 0.8]))
+print ('    [0.2, 0.8]:', np.percentile(sims_total_service_time_system, [20, 80]))
 print ('Total wait time in system: {:.2f}'.format(np.mean(sims_total_wait_time_system)))
-print ('    [0.2, 0.8]:', np.percentile(sims_total_wait_time_system, [0.2, 0.8]))
+print ('    [0.2, 0.8]:', np.percentile(sims_total_wait_time_system, [20, 80]))
 print ('Total thruput of system: {:.2f}'.format(np.mean(sims_thruput_checkin_checkout)))
-print ('    [0.2, 0.8]:', np.percentile(sims_thruput_checkin_checkout, [0.2, 0.8]))
+print ('    [0.2, 0.8]:', np.percentile(sims_thruput_checkin_checkout, [20, 80]))
+print ('Total thruput of check_in: {:.2f}'.format(np.mean(sims_thruput_checkin)))
+print ('    [0.2, 0.8]:', np.percentile(sims_thruput_checkin, [20, 80]))
+print ('Total thruput of refine_complaint: {:.2f}'.format(np.mean(sims_thruput_refine_complaint)))
+print ('    [0.2, 0.8]:', np.percentile(sims_thruput_refine_complaint, [20, 80]))
+print ('Total thruput of exam: {:.2f}'.format(np.mean(sims_thruput_exam)))
+print ('    [0.2, 0.8]:', np.percentile(sims_thruput_exam, [20, 80]))
+print ('Total thruput of checkout: {:.2f}'.format(np.mean(sims_thruput_checkout)))
+print ('    [0.2, 0.8]:', np.percentile(sims_thruput_checkout, [20, 80]))
