@@ -233,6 +233,8 @@ base_case_types = pd.DataFrame([preventative, chronic, acute], columns = cols)
 arrivals_day = 100
 arrivals_hour = arrivals_day / 10
 arrivals_minute = arrivals_hour / 60
+arrivals_quarterhour = arrivals_hour / 4
+arrivals_quarterhour_sigma = 0.5
 
 # Model full day of continuous operations
 # Minutes are periods for analysis
@@ -247,7 +249,7 @@ processes_with_variability = variable_steps['Process'].to_list()
 
 # Set up sim repositories
 
-n_sims = 1000
+n_sims = 100
 
 sims_total_wait_time_system = np.empty(shape = n_sims)
 sims_total_service_time_system = np.empty(shape = n_sims)
@@ -286,6 +288,9 @@ sims_mean_time_system_checkout = np.empty(shape = n_sims)
 
 for sim in range(n_sims) :
 
+    if sim % 10 == 0 :
+        print (sim)
+
     # Holders for check_in step
     servers_check_in = variable_steps.loc[variable_steps['Process'] == processes_with_variability[0], 'Servers'].item()
 
@@ -309,7 +314,20 @@ for sim in range(n_sims) :
     for p in range(n_periods) :
 
         # check_in step
-        n_arrivals_check_in = np.random.poisson(arrivals_minute)
+
+        # ## Modelled as hourly poisson
+        # n_arrivals_check_in = np.random.poisson(arrivals_minute)
+        ## Modelled as bunched poisson
+        if p % 15 == 0 :
+            n_arrivals_check_in = np.random.poisson(arrivals_quarterhour)
+        else :
+            n_arrivals_check_in = 0
+        # ## Modelled as bunched normal
+        # if p % 15 == 0 :
+        #     n_arrivals_check_in = round(np.random.normal(arrivals_quarterhour, arrivals_quarterhour_sigma))
+        # else :
+        #     n_arrivals_check_in = 0
+
         server_dict_check_in, service_completed_check_in, service_times_completed_list_check_in = mark_service_time(server_dict_check_in, service_completed_check_in, serve_time_track_dict_check_in, service_times_completed_list_check_in)
         n_servers_free_check_in = check_servers_free(server_dict_check_in)
         from_wait_list_check_in, from_new_arrivals_check_in = how_many_to_move_from_where(waiting_dict_check_in, n_servers_free_check_in, n_arrivals_check_in)
@@ -447,13 +465,15 @@ for sim in range(n_sims) :
     sims_mean_time_system_checkout[sim] = mean_service_time_checkout_final + mean_waiting_time_checkout_final
 
 columns = ['Total_service_time', 'Total_waiting_time', 'Total_time_in_system', 'Thruput_total', 'Arrivals_check_in', 'Served_check_in', 'Thruput_check_in', 'Mean_serve_time_check_in', 'Mean_wait_time_check_in', 'Mean_system_time_check_in', 'Arrivals_refine_complaint', 'Served_refine_complaint', 'Thruput_refine_complaint', 'Mean_serve_time_refine_complaint', 'Mean_wait_time_refine_complaint', 'Mean_system_time_refine_complaint', 'Arrivals_exam', 'Served_exam', 'Thruput_exam', 'Mean_serve_time_exam', 'Mean_wait_time_exam', 'Mean_system_time_exam', 'Arrivals_checkout', 'Served_checkout', 'Thruput_checkout', 'Mean_serve_time_checkout', 'Mean_wait_time_checkout', 'Mean_system_time_checkout']
-data = [sims_total_service_time_system, sims_total_wait_time_system, sims_total_time_system, sims_thruput_checkin_checkout, sims_thruput_checkin, sims_thruput_refine_complaint, sims_thruput_exam, sims_thruput_checkout, sims_arrivals_check_in, sims_served_check_in, sims_mean_serve_time_check_in, sims_mean_waiting_time_check_in, sims_mean_time_system_check_in, sims_arrivals_refine_complaint, sims_served_refine_complaint, sims_mean_serve_time_refine_complaint, sims_mean_waiting_time_refine_complaint, sims_mean_time_system_refine_complaint, sims_arrivals_exam, sims_served_exam, sims_mean_serve_time_exam, sims_mean_waiting_time_exam, sims_mean_time_system_exam, sims_arrivals_checkout, sims_served_checkout, sims_mean_serve_time_checkout, sims_mean_waiting_time_checkout, sims_mean_time_system_checkout]
 
-final_results = pd.DataFrame(data)
-final_results = final_results.T
-final_results.columns = columns
+### REORDER THESE YOU IDIOT
 
-final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/base_case_arrivalspoisson10hour_providerwaitnormalm25s075.csv')
+data = [sims_total_service_time_system, sims_total_wait_time_system, sims_total_time_system, sims_thruput_checkin_checkout, sims_arrivals_check_in, sims_served_check_in, sims_thruput_checkin, sims_mean_serve_time_check_in, sims_mean_waiting_time_check_in, sims_mean_time_system_check_in, sims_arrivals_refine_complaint, sims_served_refine_complaint, sims_thruput_refine_complaint, sims_mean_serve_time_refine_complaint, sims_mean_waiting_time_refine_complaint, sims_mean_time_system_refine_complaint, sims_arrivals_exam, sims_served_exam, sims_thruput_exam, sims_mean_serve_time_exam, sims_mean_waiting_time_exam, sims_mean_time_system_exam, sims_arrivals_checkout, sims_served_checkout, sims_thruput_checkout, sims_mean_serve_time_checkout, sims_mean_waiting_time_checkout, sims_mean_time_system_checkout]
+
+final_results = pd.DataFrame(data, index = columns)
+final_results.columns = ['Sim_' + str(s) for s in range(n_sims)]
+
+final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/200503_base_case_arrivalsbunchedpoisson10_providerwaitnormalm25s075.csv')
 
 print ('Total time in system: {:.2f}'.format(np.mean(sims_total_time_system)))
 print ('    [0.2, 0.8]:', np.percentile(sims_total_time_system, [20, 80]))
