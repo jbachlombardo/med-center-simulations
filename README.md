@@ -13,6 +13,9 @@ Med center process flow simulations for ISP:
   - Simulation model using skewed distributions, looped over multiple steps in terminal -- n_simulations with mean results from simulations
 - 4_ (2/5)
   - Simulation model exploring different arrival distributions eg bunched poisson and normal arrivals
+  - **Troubleshooting (10/5)**: Fixed issue with wait list to service, see this for documentation; fixed in 4_ update and 6_ update
 - 5_ (3/5) 
   - Simulation model incorporating random wait times of provider (provider not available immediately when patient is arrives)
   - Terminal version provides output to csv for summarizing and analyzing
+- 6_ (10/5)
+  - Testing variations
