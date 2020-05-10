@@ -19,3 +19,5 @@ Med center process flow simulations for ISP:
   - Terminal version provides output to csv for summarizing and analyzing
 - 6_ (10/5)
   - Testing variations
+- 7_ (10/5)
+  - Simulation variations (terminal)
