@@ -21,3 +21,5 @@ Med center process flow simulations for ISP:
   - Testing variations
 - 7_ (10/5)
   - Simulation variations (terminal)
+- 8_ (19/5)
+  - Adding follow up step, which required rewriting several functions to accomodate shared servers between refine_complaint and followup steps
