@@ -23,3 +23,5 @@ Med center process flow simulations for ISP:
   - Simulation variations (terminal)
 - 8_ (19/5)
   - Adding follow up step, which required rewriting several functions to accomodate shared servers between refine_complaint and followup steps
+- 9_ (20/5)
+  - Adding lunch break and ending hours, which compresses arrivals
