@@ -199,7 +199,8 @@ medium = 0.1
 high = 0.2
 
 # Providers available
-providers = {'Doctor': 9, 'Nurse': 5, 'FlowStaff': 20, 'CSR': 10}
+# providers = {'Doctor': 9, 'Nurse': 5, 'FlowStaff': 20, 'CSR': 10}
+providers = {'Doctor': 1, 'Nurse': 2, 'FlowStaff': 3, 'CSR': 2} # Covid 122
 
 # Time estimates for each step in the patient journey
 # Time estimates for Exam by provider (currently NaN's) to come from times by condition type (below)
@@ -225,15 +226,23 @@ process_flow.loc[process_flow['Staff'] == 'CSR', 'Servers'] = (process_flow.loc[
 pass_through_steps = process_flow.loc[process_flow['Time_WorstCase'] == 0]
 variable_steps = process_flow.loc[process_flow['Time_WorstCase'] != 0]
 
-# Data table for drawing service times for patients
+# # Data table for drawing service times for patients
+# cols = ['Type', 'Frequency', 'Time_Mean', 'Time_WorstCase', 'Perc_WorstCase']
+# preventative = ['Preventative', 0.2, 30, 30, low]
+# chronic = ['Chronic', 0.6, 30, 30, medium]
+# acute = ['Acute', 0.2, 15, 5, low]
+# base_case_types = pd.DataFrame([preventative, chronic, acute], columns = cols)
+
+# ===== COVID VERSION ===== Data table for drawing service times for patients
 cols = ['Type', 'Frequency', 'Time_Mean', 'Time_WorstCase', 'Perc_WorstCase']
-preventative = ['Preventative', 0.2, 30, 30, low]
-chronic = ['Chronic', 0.6, 30, 30, medium]
-acute = ['Acute', 0.2, 15, 5, low]
+preventative = ['Preventative', 0.0, 30, 30, low]
+chronic = ['Chronic', 0.0, 30, 30, medium]
+acute = ['Acute', 1, 15, 5, high]
 base_case_types = pd.DataFrame([preventative, chronic, acute], columns = cols)
 
 # Arrivals to be modeled as poisson, scaling down to minute arrivals
-arrivals_day = 130
+# arrivals_day = 130
+arrivals_day = 130 * 0.05 # 5% arrivals = possibly covid
 arrivals_hour = arrivals_day / 7 # NOTE: Change for lunch break modeling
 arrivals_minute = arrivals_hour / 60
 arrivals_quarterhour = arrivals_hour / 4
@@ -336,19 +345,19 @@ for sim in range(n_sims) :
     for p in range(n_periods) :
 
         # check_in step
-        # ===== Modeled as normal =====
-        if p % 15 == 0 :
-            if (p >= 0 and p < 180) or (p >= 240 and p < 479) :
-                n_arrivals_check_in = round(np.random.normal(arrivals_quarterhour, arrivals_quarterhour_sigma))
-        else :
-            n_arrivals_check_in = 0
-
-        # # ===== Modeled as poisson =====
+        # # ===== Modeled as normal =====
         # if p % 15 == 0 :
         #     if (p >= 0 and p < 180) or (p >= 240 and p < 479) :
-        #         n_arrivals_check_in = np.random.poisson(arrivals_quarterhour)
+        #         n_arrivals_check_in = round(np.random.normal(arrivals_quarterhour, arrivals_quarterhour_sigma))
         # else :
         #     n_arrivals_check_in = 0
+
+        # ===== Modeled as poisson =====
+        if p % 15 == 0 :
+            if (p >= 0 and p < 180) or (p >= 240 and p < 479) :
+                n_arrivals_check_in = np.random.poisson(arrivals_quarterhour)
+        else :
+            n_arrivals_check_in = 0
 
         arrivals_per_15[p] = n_arrivals_check_in
 
@@ -543,7 +552,8 @@ data = [sims_total_service_time_system, sims_total_wait_time_system, sims_total_
 final_results = pd.DataFrame(data, index = columns)
 final_results.columns = ['Sim_' + str(s) for s in range(n_sims)]
 
-final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200524_5stepsLunch_Base_BunchedPoisson130.csv')
+# final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200524_5stepsLunch_Base_BunchedPoisson130.csv')
+final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200524_5stepsLunch_0.05Covid132_BunchedPoisson130.csv') ## COVID NAMING CONVENTION
 
 print ('Total time in system: {:.2f}'.format(np.mean(sims_total_time_system)))
 print ('    [0.2, 0.8]:', np.percentile(sims_total_time_system, [20, 80]))
