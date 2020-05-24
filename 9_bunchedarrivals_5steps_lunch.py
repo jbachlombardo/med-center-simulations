@@ -99,7 +99,7 @@ def move_from_wait_list_to_service(dictionary_waiting, dictionary_service, count
     if empty_servers == True : # empty_servers = True for steps not using flow staff otherwise empty_servers pre-defined
         empty_servers = [k for k, v in dictionary_service.items() if np.isnan(v)]
     n_free_servers = len(empty_servers)
-    patients_on_wait_list = sorted(list(dictionary_waiting.keys()))
+    patients_on_wait_list = list(dictionary_waiting.keys()) # Remove sort to fix bug with sorting 9 / 10
     patients_move_to_serve = patients_on_wait_list[:n_free_servers]
     if (len(patients_move_to_serve) > 0) and (len(empty_servers) > 0) :
         for i, m in enumerate(patients_move_to_serve) :
@@ -141,7 +141,7 @@ def add_to_wait_list(dictionary_waiting, count_n_arrivals, count_arrivals_placed
     """Move patients from arrivals to wait list
     To be preceded by: if arrivals_placed < n_arrivals"""
     count_diff = count_n_arrivals - count_arrivals_placed
-    wait_keys = np.sort(list(dictionary_waiting.keys()))
+    wait_keys = list(dictionary_waiting.keys()) # Remove sort to fix bug with sorting 9 / 10
     for i in range(count_diff) :
         if len(wait_keys) < 1 :
             new_waitname = 'Waiting' + str(i)
