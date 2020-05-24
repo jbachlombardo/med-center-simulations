@@ -183,6 +183,14 @@ def available_flow_staff(dict1, dict2) :
                 dict1.items() if np.isnan(v)]) - set([k for k, v in dict2.items() if np.isnan(v)])))
     return available
 
+def max_try_except(wait_time_list) :
+    """Function to calculate summary stat of maximum wait times
+    Requires try/except block for np.max returning error when no wait times in list"""
+    try :
+        return np.max(wait_time_list)
+    except :
+        return 0
+
 # ===== MODEL PARAMETERS =====
 
 # Estimates for how often the worst case scenario in patient service times occurs
@@ -261,30 +269,35 @@ sims_arrivals_check_in = np.empty(shape = n_sims)
 sims_served_check_in = np.empty(shape = n_sims)
 sims_mean_serve_time_check_in = np.empty(shape = n_sims)
 sims_mean_waiting_time_check_in = np.empty(shape = n_sims)
+sims_max_waiting_time_check_in = np.empty(shape = n_sims)
 sims_mean_time_system_check_in = np.empty(shape = n_sims)
 
 sims_arrivals_refine_complaint = np.empty(shape = n_sims)
 sims_served_refine_complaint = np.empty(shape = n_sims)
 sims_mean_serve_time_refine_complaint = np.empty(shape = n_sims)
 sims_mean_waiting_time_refine_complaint = np.empty(shape = n_sims)
+sims_max_waiting_time_refine_complaint = np.empty(shape = n_sims)
 sims_mean_time_system_refine_complaint = np.empty(shape = n_sims)
 
 sims_arrivals_exam = np.empty(shape = n_sims)
 sims_served_exam = np.empty(shape = n_sims)
 sims_mean_serve_time_exam = np.empty(shape = n_sims)
 sims_mean_waiting_time_exam = np.empty(shape = n_sims)
+sims_max_waiting_time_exam = np.empty(shape = n_sims)
 sims_mean_time_system_exam = np.empty(shape = n_sims)
 
 sims_arrivals_follow_up = np.empty(shape = n_sims)
 sims_served_follow_up = np.empty(shape = n_sims)
 sims_mean_serve_time_follow_up = np.empty(shape = n_sims)
 sims_mean_waiting_time_follow_up = np.empty(shape = n_sims)
+sims_max_waiting_time_follow_up = np.empty(shape = n_sims)
 sims_mean_time_system_follow_up = np.empty(shape = n_sims)
 
 sims_arrivals_checkout = np.empty(shape = n_sims)
 sims_served_checkout = np.empty(shape = n_sims)
 sims_mean_serve_time_checkout = np.empty(shape = n_sims)
 sims_mean_waiting_time_checkout = np.empty(shape = n_sims)
+sims_max_waiting_time_checkout = np.empty(shape = n_sims)
 sims_mean_time_system_checkout = np.empty(shape = n_sims)
 
 for sim in range(n_sims) :
@@ -431,6 +444,7 @@ for sim in range(n_sims) :
     mean_service_time_check_in_final = np.mean(service_times_completed_list_check_in)
     mean_patients_waiting_check_in_final = tracker_check_in[:, 2].sum()
     mean_waiting_time_check_in_final = np.sum(waiting_time_list_check_in) / served_check_in_final
+    max_waiting_time_check_in_final = max_try_except(waiting_time_list_check_in)
     mean_time_in_system_check_in_final = mean_waiting_time_check_in_final + mean_service_time_check_in_final
 
     # Summary stats for refine_complaint
@@ -439,6 +453,7 @@ for sim in range(n_sims) :
     mean_service_time_refine_complaint_final = np.mean(service_times_completed_list_refine_complaint)
     mean_patients_waiting_refine_complaint_final = tracker_refine_complaint[:, 2].sum()
     mean_waiting_time_refine_complaint_final = np.sum(waiting_time_list_refine_complaint) / served_refine_complaint_final
+    max_waiting_time_refine_complaint_final = max_try_except(waiting_time_list_refine_complaint)
     mean_time_in_system_refine_complaint_final = mean_waiting_time_refine_complaint_final + mean_service_time_refine_complaint_final
 
     # Summary stats for exam
@@ -447,6 +462,7 @@ for sim in range(n_sims) :
     mean_service_time_exam_final = np.mean(service_times_completed_list_exam)
     mean_patients_waiting_exam_final = tracker_exam[:, 2].sum()
     mean_waiting_time_exam_final = np.sum(waiting_time_list_exam) / served_exam_final
+    max_waiting_time_exam_final = max_try_except(waiting_time_list_exam)
     mean_time_in_system_exam_final = mean_waiting_time_exam_final + mean_service_time_exam_final
 
     # Summary stats for follow_up
@@ -455,6 +471,7 @@ for sim in range(n_sims) :
     mean_service_time_follow_up_final = np.mean(service_times_completed_list_follow_up)
     mean_patients_waiting_follow_up_final = tracker_follow_up[:, 2].sum()
     mean_waiting_time_follow_up_final = np.sum(waiting_time_list_follow_up) / served_follow_up_final
+    max_waiting_time_follow_up_final = max_try_except(waiting_time_list_follow_up)
     mean_time_in_system_follow_up_final = mean_waiting_time_follow_up_final + mean_service_time_follow_up_final
 
     # Summary stats for checkout
@@ -463,6 +480,7 @@ for sim in range(n_sims) :
     mean_service_time_checkout_final = np.mean(service_times_completed_list_checkout)
     mean_patients_waiting_checkout_final = tracker_checkout[:, 2].sum()
     mean_waiting_time_checkout_final = np.sum(waiting_time_list_checkout) / served_checkout_final
+    max_waiting_time_checkout_final = max_try_except(waiting_time_list_checkout)
     mean_time_in_system_checkout_final = mean_waiting_time_checkout_final + mean_service_time_checkout_final
 
     # Summary stats for total
@@ -487,40 +505,45 @@ for sim in range(n_sims) :
     sims_served_check_in[sim] = served_check_in_final
     sims_mean_serve_time_check_in[sim] = mean_service_time_check_in_final
     sims_mean_waiting_time_check_in[sim] = mean_waiting_time_check_in_final
+    sims_max_waiting_time_check_in[sim] = max_waiting_time_check_in_final
     sims_mean_time_system_check_in[sim] = mean_service_time_check_in_final + mean_waiting_time_check_in_final
     # refine_complaint
     sims_arrivals_refine_complaint[sim] = arrived_refine_complaint_final
     sims_served_refine_complaint[sim] = served_refine_complaint_final
     sims_mean_serve_time_refine_complaint[sim] = mean_service_time_refine_complaint_final
     sims_mean_waiting_time_refine_complaint[sim] = mean_waiting_time_refine_complaint_final
+    sims_max_waiting_time_refine_complaint[sim] = max_waiting_time_refine_complaint_final
     sims_mean_time_system_refine_complaint[sim] = mean_service_time_refine_complaint_final + mean_waiting_time_refine_complaint_final
     # exam
     sims_arrivals_exam[sim] = arrived_exam_final
     sims_served_exam[sim] = served_exam_final
     sims_mean_serve_time_exam[sim] = mean_service_time_exam_final
     sims_mean_waiting_time_exam[sim] = mean_waiting_time_exam_final
+    sims_max_waiting_time_exam[sim] = max_waiting_time_exam_final
     sims_mean_time_system_exam[sim] = mean_service_time_exam_final + mean_waiting_time_exam_final
     # follow_up
     sims_arrivals_follow_up[sim] = arrived_follow_up_final
     sims_served_follow_up[sim] = served_follow_up_final
     sims_mean_serve_time_follow_up[sim] = mean_service_time_follow_up_final
     sims_mean_waiting_time_follow_up[sim] = mean_waiting_time_follow_up_final
+    sims_max_waiting_time_follow_up[sim] = max_waiting_time_follow_up_final
     sims_mean_time_system_follow_up[sim] = mean_service_time_follow_up_final + mean_waiting_time_follow_up_final
     # checkout
     sims_arrivals_checkout[sim] = arrived_checkout_final
     sims_served_checkout[sim] = served_checkout_final
     sims_mean_serve_time_checkout[sim] = mean_service_time_checkout_final
     sims_mean_waiting_time_checkout[sim] = mean_waiting_time_checkout_final
+    sims_max_waiting_time_checkout[sim] = max_waiting_time_checkout_final
     sims_mean_time_system_checkout[sim] = mean_service_time_checkout_final + mean_waiting_time_checkout_final
 
-columns = ['Total_service_time', 'Total_waiting_time', 'Total_time_in_system', 'Thruput_total', 'Arrivals_check_in', 'Served_check_in', 'Thruput_check_in', 'Mean_serve_time_check_in', 'Mean_wait_time_check_in', 'Mean_system_time_check_in', 'Arrivals_refine_complaint', 'Served_refine_complaint', 'Thruput_refine_complaint', 'Mean_serve_time_refine_complaint', 'Mean_wait_time_refine_complaint', 'Mean_system_time_refine_complaint', 'Arrivals_exam', 'Served_exam', 'Thruput_exam', 'Mean_serve_time_exam', 'Mean_wait_time_exam', 'Mean_system_time_exam', 'Arrivals_follow_up', 'Served_follow_up', 'Thruput_follow_up', 'Mean_serve_time_follow_up', 'Mean_wait_time_follow_up', 'Mean_system_time_follow_up', 'Arrivals_checkout', 'Served_checkout', 'Thruput_checkout', 'Mean_serve_time_checkout', 'Mean_wait_time_checkout', 'Mean_system_time_checkout']
+columns = ['Total_service_time', 'Total_waiting_time', 'Total_time_in_system', 'Thruput_total', 'Arrivals_check_in', 'Served_check_in', 'Thruput_check_in', 'Mean_serve_time_check_in', 'Mean_wait_time_check_in', 'Max_wait_time_check_in', 'Mean_system_time_check_in', 'Arrivals_refine_complaint', 'Served_refine_complaint', 'Thruput_refine_complaint', 'Mean_serve_time_refine_complaint', 'Mean_wait_time_refine_complaint', 'Max_wait_time_refine_complaint', 'Mean_system_time_refine_complaint', 'Arrivals_exam', 'Served_exam', 'Thruput_exam', 'Mean_serve_time_exam', 'Mean_wait_time_exam', 'Max_wait_time_exam', 'Mean_system_time_exam', 'Arrivals_follow_up', 'Served_follow_up', 'Thruput_follow_up', 'Mean_serve_time_follow_up', 'Mean_wait_time_follow_up', 'Max_wait_time_follow_up', 'Mean_system_time_follow_up', 'Arrivals_checkout', 'Served_checkout', 'Thruput_checkout', 'Mean_serve_time_checkout', 'Mean_wait_time_checkout', 'Max_wait_time_checkout', 'Mean_system_time_checkout']
 
-data = [sims_total_service_time_system, sims_total_wait_time_system, sims_total_time_system, sims_thruput_checkin_checkout, sims_arrivals_check_in, sims_served_check_in, sims_thruput_checkin, sims_mean_serve_time_check_in, sims_mean_waiting_time_check_in, sims_mean_time_system_check_in, sims_arrivals_refine_complaint, sims_served_refine_complaint, sims_thruput_refine_complaint, sims_mean_serve_time_refine_complaint, sims_mean_waiting_time_refine_complaint, sims_mean_time_system_refine_complaint, sims_arrivals_exam, sims_served_exam, sims_thruput_exam, sims_mean_serve_time_exam, sims_mean_waiting_time_exam, sims_mean_time_system_exam, sims_arrivals_follow_up, sims_served_follow_up, sims_thruput_follow_up, sims_mean_serve_time_follow_up, sims_mean_waiting_time_follow_up, sims_mean_time_system_follow_up, sims_arrivals_checkout, sims_served_checkout, sims_thruput_checkout, sims_mean_serve_time_checkout, sims_mean_waiting_time_checkout, sims_mean_time_system_checkout]
+data = [sims_total_service_time_system, sims_total_wait_time_system, sims_total_time_system, sims_thruput_checkin_checkout, sims_arrivals_check_in, sims_served_check_in, sims_thruput_checkin, sims_mean_serve_time_check_in, sims_mean_waiting_time_check_in, sims_max_waiting_time_check_in, sims_mean_time_system_check_in, sims_arrivals_refine_complaint, sims_served_refine_complaint, sims_thruput_refine_complaint, sims_mean_serve_time_refine_complaint, sims_mean_waiting_time_refine_complaint, sims_max_waiting_time_refine_complaint, sims_mean_time_system_refine_complaint, sims_arrivals_exam, sims_served_exam, sims_thruput_exam, sims_mean_serve_time_exam, sims_mean_waiting_time_exam, sims_max_waiting_time_exam, sims_mean_time_system_exam, sims_arrivals_follow_up, sims_served_follow_up, sims_thruput_follow_up, sims_mean_serve_time_follow_up, sims_mean_waiting_time_follow_up, sims_max_waiting_time_follow_up, sims_mean_time_system_follow_up, sims_arrivals_checkout, sims_served_checkout, sims_thruput_checkout, sims_mean_serve_time_checkout, sims_mean_waiting_time_checkout, sims_max_waiting_time_checkout, sims_mean_time_system_checkout]
 
 final_results = pd.DataFrame(data, index = columns)
 final_results.columns = ['Sim_' + str(s) for s in range(n_sims)]
 
-final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200520_5stepsLunch_Base_BunchedNormal130.csv')
+final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200524_5stepsLunch_Base_BunchedPoisson130.csv')
 
 print ('Total time in system: {:.2f}'.format(np.mean(sims_total_time_system)))
 print ('    [0.2, 0.8]:', np.percentile(sims_total_time_system, [20, 80]))
