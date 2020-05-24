@@ -25,3 +25,4 @@ Med center process flow simulations for ISP:
   - Adding follow up step, which required rewriting several functions to accomodate shared servers between refine_complaint and followup steps
 - 9_ (20/5)
   - Adding lunch break and ending hours, which compresses arrivals
+  - **Fix (24/5)**: Fixed leakage in adding to wait list due to sorting wait list dict keys at 10 causing overwriting of patients in wait queue
