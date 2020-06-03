@@ -4,7 +4,7 @@ Med center process flow simulations for ISP:
 
 - 10_ (28/5)
   - Rewriting code to increase simulation speed. ~15x speed increase achieved (~7.4s / sim to ~0.5s / sim) by generating time distributions for each simulation at the beginning of the simulation and then randomly drawing from these distributions within each period of the simulation, rather than generating a new distribution within each period of the simulation.
-    - Jupyter `rewrite_sample_testing` to confirm that the change in distribution generation approach does not alter the distributions being drawn from such that service times in the simulations are different. T-tests confirm the samples are not significantly different.
+    - Jupyter `rewrite_sample_testing` to confirm that the change in distribution generation approach does not alter the distributions being drawn from such that service times in the simulations are different. T-tests fail to reject that the samples are significantly different.
 - 9_ (20/5)
   - Adding lunch break and ending hours, which compresses arrivals
   - **Fix (24/5)**: Fixed leakage in adding to wait list due to sorting wait list dict keys at 10 causing overwriting of patients in wait queue
