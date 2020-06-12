@@ -2,6 +2,10 @@
 
 Med center process flow simulations for ISP:
 
+- 11_ (12/6)
+  - Rewrite to change operating model of patient flow such that:
+    - Single `flow_staff` tied to patient throughout the `refine_complaint`, `exam`, and `follow_up` steps
+    - Incorporating `offload` to simulate `providers` offloading a percentage of their work onto the tied `flow_staff`
 - 10_ (28/5)
   - Rewriting code to increase simulation speed. ~15x speed increase achieved (~7.4s / sim to ~0.5s / sim) by generating time distributions for each simulation at the beginning of the simulation and then randomly drawing from these distributions within each period of the simulation, rather than generating a new distribution within each period of the simulation.
     - Jupyter `rewrite_sample_testing` to confirm that the change in distribution generation approach does not alter the distributions being drawn from such that service times in the simulations are different. T-tests fail to reject that the samples are significantly different.
