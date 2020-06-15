@@ -311,7 +311,7 @@ medium = 0.1
 high = 0.2
 
 # Providers available
-providers = {'Doctor': 9, 'Nurse': 5, 'FlowStaff': 20, 'CSR': 10}
+providers = {'Doctor': 9, 'Nurse': 5, 'FlowStaff': 21, 'CSR': 10}
 
 # Time estimates for each step in the patient journey
 # Time estimates for Exam by provider (currently NaN's) to come from times by condition type (below)
@@ -356,7 +356,7 @@ hours = 10
 n_periods = int(60 * hours)
 
 # Offload percentage
-offload = 0.05
+offload = 0.25
 
 # List of processes to be cycled through
 processes_with_variability = variable_steps['Process'].to_list()
@@ -663,10 +663,10 @@ final_results['Thruput_follow_up'] = final_results['Served_follow_up'] / final_r
 final_results['Thruput_checkout'] = final_results['Served_checkout'] / final_results['Arrivals_checkout']
 final_results['Thruput_total'] = final_results['Served_checkout'] / final_results['Arrivals_check_in']
 
-final_results['Staffing'] = '10-20-9'
+final_results['Staffing'] = '10-21-9'
 final_results['Offload'] = offload
 
-final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200614_offload_staff10209_offload05.csv') ## COVID NAMING CONVENTION
+final_results.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200614_offload_staff10219_offload25.csv') ## COVID NAMING CONVENTION
 # final_results.T.to_csv('/Users/jbachlombardo/OneDrive - INSEAD/Coursework/P5/Analytics ISP/Results of sims/Sims/200614_offload_test.csv') ## TEST
 
 t1 = time.clock()
