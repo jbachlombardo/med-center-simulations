@@ -1,6 +1,6 @@
 # med-center-simulations
 
-Med center process flow simulations for ISP:
+Med center process flow simulations for INSEAD independent study project analyzing how to most efficiently process covid / non-covid patients at a community clinic:
 
 - 11_ (12/6)
   - Rewrite to change operating model of patient flow such that:
